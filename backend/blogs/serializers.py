@@ -302,19 +302,19 @@ class TagSerializer(serializers.ModelSerializer):
             "comments",
         ]
 
-    def create(self, validated_data):
-        blog_data = validated_data.pop("blogs")
-        comments_data = validated_data.pop("comments")
-        tag = Tag.objects.create(**validated_data)
-
-        for blog in blog_data:
-            tag.blogs.add(blog)
-
-        for comment in comments_data:
-            tag.comments.add(comment)
-
-        tag.save()
-        return tag
+    # def create(self, validated_data):
+    #     blog_data = validated_data.pop("blogs")
+    #     comments_data = validated_data.pop("comments")
+    #     tag = Tag.objects.create(**validated_data)
+    #
+    #     for blog in blog_data:
+    #         tag.blogs.add(blog)
+    #
+    #     for comment in comments_data:
+    #         tag.comments.add(comment)
+    #
+    #     tag.save()
+    #     return tag
 
 
 class TagCreateSerializer(serializers.ModelSerializer):
