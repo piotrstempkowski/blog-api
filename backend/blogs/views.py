@@ -1,14 +1,16 @@
 from django.contrib.auth import get_user_model
 from rest_framework import viewsets
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.filters import OrderingFilter
+from rest_framework.permissions import IsAdminUser
 
 from .filters import CategoryFilter
 from .models import Category, Blog, Comment, Reply, Like, Reaction, Tag
 from .pagination import CategoryPageNumberPagination, BlogsPageNumberPagination
-from .permissions import IsAuthorOrAdmin
+from .permissions import StaffAllReadOnlyUser, IsAuthorOrAdmin
 from .serializers import (
     CategorySerializer,
+    CategoryCreateSerializer,
     BlogSerializer,
     CommentSerializer,
     BlogForUserSerializer,
@@ -19,7 +21,7 @@ from .serializers import (
     CommentForUserSerializer,
     ReplyForUserSerializer,
     LikeForUserSerializer,
-    ReactionForUserSerializer, TagCreateSerializer,
+    ReactionForUserSerializer,
 )
 
 User = get_user_model()
@@ -29,18 +31,16 @@ class CategoryViewSet(viewsets.ModelViewSet):
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
     authentication_classes = [TokenAuthentication]
-    filter_backends = [CategoryFilter]
-    # filterset_class = CategoryFilter
-    # filter_backends = [CategoryFilter]
+    filter_backends = [CategoryFilter, OrderingFilter]
+    ordering = ["id"]
     search_fields = ["name", "id"]
     pagination_class = CategoryPageNumberPagination
+    permission_classes = [StaffAllReadOnlyUser]
 
-    def get_permissions(self):
-        if self.action == "list" or self.action == "retrieve":
-            permission_classes = [IsAuthenticated]
-        else:
-            permission_classes = [IsAdminUser]
-        return [permission() for permission in permission_classes]
+    def get_serializer_class(self):
+        if self.request.method == "GET":
+            return super().get_serializer_class()
+        return CategoryCreateSerializer
 
 
 class BlogViewSet(viewsets.ModelViewSet):
@@ -67,44 +67,6 @@ class BlogViewSet(viewsets.ModelViewSet):
             except User.DoesNotExist:
                 pass
         return super().get_queryset()
-
-    # def get_permissions(self):
-    #     # Grants permissions to POST, GET for authenticated users
-    #     if self.action in ["list", "create"]:
-    #         permission_classes = [IsAuthenticated]
-    #     # Grants specific permissions for authors and admins
-    #     else:
-    #         permission_classes = [IsAuthorOrAdmin]
-    #     return [permission() for permission in permission_classes]
-
-
-# class BlogUserViewSet(viewsets.ModelViewSet):
-#     serializer_class = BlogSerializer
-#     queryset = Blog.objects.all()
-#     authentication_classes = [TokenAuthentication]
-#     permission_classes = [IsAuthorOrAdmin]
-#
-#     # def list(self, request, *args, **kwargs):
-#     #     username = self.request.user
-#     #     print(username)
-#     #     return super().list(request, *args, **kwargs)
-#
-#     # Filtering against the current user
-#     def get_queryset(self):
-#         # Filtering against the current user
-#
-#         username = self.request.user
-#         print(username)
-#         return Blog.objects.filter(author__username=username)
-
-# Filtering against queryset parameters
-
-# username = self.kwargs["username"]
-# return Blog.objects.filter(author__username=username)
-
-#
-# user_blogs = BlogUserViewSet.as_view({"get": "list"})
-# user_blog_detail = BlogUserViewSet.as_view({"get": "retrieve"})
 
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -208,8 +170,3 @@ class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAdminUser]
-
-    # def get_serializer_class(self):
-    #     if self.request.method == "POST":
-    #         return TagCreateSerializer
-    #     return super().get_serializer_class()

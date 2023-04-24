@@ -86,13 +86,24 @@ class BlogForCategorySerializer(serializers.ModelSerializer):
         fields = ["id", "title", "description", "posted_at", "author"]
 
 
+class CategoryCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = [
+            "name",
+        ]
+
+
 class CategorySerializer(serializers.ModelSerializer):
     name = serializers.CharField()
     blogs = BlogForCategorySerializer(many=True, read_only=True)
 
     class Meta:
         model = Category
-        fields = "__all__"
+        fields = [
+            "name",
+            "blogs",
+        ]
 
 
 class BlogForUserSerializer(serializers.ModelSerializer):
@@ -301,20 +312,6 @@ class TagSerializer(serializers.ModelSerializer):
             "blogs",
             "comments",
         ]
-
-    def create(self, validated_data):
-        blog_data = validated_data.pop("blogs")
-        comments_data = validated_data.pop("comments")
-        tag = Tag.objects.create(**validated_data)
-
-        for blog in blog_data:
-            tag.blogs.add(blog)
-
-        for comment in comments_data:
-            tag.comments.add(comment)
-
-        tag.save()
-        return tag
 
 
 class TagCreateSerializer(serializers.ModelSerializer):

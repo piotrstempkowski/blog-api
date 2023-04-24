@@ -13,7 +13,3 @@ class CustomUserFactory(DjangoModelFactory):
     first_name = factory.Faker("first_name")
     last_name = factory.Faker("last_name")
     password = factory.PostGenerationMethodCall("set_password", "password123")
-
-    # You can set other fields from the AbstractUser model here if needed, e.g.:
-    # first_name = ...
-    # last_name = ...

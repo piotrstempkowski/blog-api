@@ -21,12 +21,13 @@ class UserSerializer(serializers.ModelSerializer):
         model = CustomUser
         # exclude = ["password"]
         fields = [
+            "id",
             "username",
             "first_name",
             "last_name",
             "email",
             "last_login",
-            "deleted",
+            "deletable",
             "blogs_amount",
             "blogs",
         ]
@@ -36,4 +37,11 @@ class CreateUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
         fields = ("username", "first_name", "last_name", "email", "password")
-        # extra_kwargs = {"password": {"write_only": True}}
+
+
+class UpdateUserSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(required=False)
+
+    class Meta:
+        model = CustomUser
+        fields = ("username", "first_name", "last_name", "email", "password")

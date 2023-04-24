@@ -59,10 +59,17 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
+<<<<<<< HEAD
     'TITLE': 'blog-api',
     'DESCRIPTION': 'Blog app in REST API',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
+=======
+    "TITLE": "blog-api",
+    "DESCRIPTION": "Blog app in REST API",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+>>>>>>> feature/1.Review
     # OTHER SETTINGS
 }
 
