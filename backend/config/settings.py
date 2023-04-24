@@ -59,7 +59,6 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-
     "TITLE": "blog-api",
     "DESCRIPTION": "Blog app in REST API",
     "VERSION": "1.0.0",
