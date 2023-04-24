@@ -9,9 +9,8 @@ class CustomUser(AbstractUser):
         return self.blogs.count()
 
     @property
-    def deleted(self):
-        if self.is_staff == False:
-            return True
+    def deletable(self):
+        return not self.is_staff
 
     # @property
     # def category_count(self):

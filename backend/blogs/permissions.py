@@ -1,5 +1,21 @@
 from rest_framework import permissions
 
+class StaffAllReadOnlyUser(permissions.BasePermission):
+    def has_permission(self, request, view):
+        # check authentication
+        if not request.user.is_authenticated:
+            return False
+        # Staff members grants all permissions
+        if request.user.is_staff:
+            return True
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        return False
+
+
+
+
 
 class IsAuthorOrAdmin(permissions.BasePermission):
     def has_permission(self, request, view):

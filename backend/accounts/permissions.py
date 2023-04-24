@@ -12,7 +12,6 @@ class AdminOrOwnerAccessPermission(permissions.BasePermission):
         # If the user is an admin, grant full permissionss
         if request.user.is_staff:
             return True
-
         # If the request is to create a new user, deny permission
         if view.action == "create":
             return False
@@ -31,3 +30,7 @@ class AdminOrOwnerAccessPermission(permissions.BasePermission):
             # Only allow the user to retrieve, update, and partially update their own data
             if request.method in ["GET", "PUT", "PATCH"]:
                 return obj == request.user
+
+
+
+
